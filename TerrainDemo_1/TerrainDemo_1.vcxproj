@@ -131,18 +131,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Common\DemoApp.cpp" />
+    <ClCompile Include="..\Common\glfw_init.cpp" />
     <ClCompile Include="..\Common\Mesh.cpp" />
     <ClCompile Include="..\Common\Model.cpp" />
     <ClCompile Include="..\Common\Shader.cpp" />
+    <ClCompile Include="..\Common\Utils.cpp" />
     <ClCompile Include="TerrainDemo_1.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Common\BasicCamera.h" />
+    <ClInclude Include="..\Common\DemoApp.h" />
+    <ClInclude Include="..\Common\glfw_init.h" />
     <ClInclude Include="..\Common\Mesh.h" />
     <ClInclude Include="..\Common\Model.h" />
+    <ClInclude Include="..\Common\pch.h" />
     <ClInclude Include="..\Common\Shader.h" />
     <ClInclude Include="..\Common\Texture.h" />
+    <ClInclude Include="..\Common\Types.h" />
+    <ClInclude Include="..\Common\Utils.h" />
     <ClInclude Include="..\Common\Vertex.h" />
+    <ClInclude Include="TerrainDemo_1.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
