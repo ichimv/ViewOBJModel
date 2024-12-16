@@ -1,13 +1,13 @@
 #include "pch.h"
 #include "Utils.h"
 
-#include <Windows.h>
 #include <detail/type_int.hpp>
 #include <cstdarg>
 #include <stdio.h>
 #include <GL/glew.h>
+#include <WinUser.h>
 
-void ErrorMessage(const char* pFileName, uint line, const char* format, ...)
+void Message(const char* pFileName, uint line, const char* format, ...)
 {
    char msg[1000];
    va_list args;
@@ -73,4 +73,46 @@ void glDebugOutput(GLenum source,
    case GL_DEBUG_SEVERITY_LOW:          printf("Low\n"); break;
    case GL_DEBUG_SEVERITY_NOTIFICATION: printf("Notification\n"); break;
    }
+}
+
+char* ReadBinaryFile(const char* pFilename, int& size)
+{
+   FILE* f = NULL;
+
+   errno_t err = fopen_s(&f, pFilename, "rb");
+
+   if (!f) {
+      char buf[256] = { 0 };
+      strerror_s(buf, sizeof(buf), err);
+      ERROR_MESSAGE("Error opening '%s': %s\n", pFilename, buf);
+      exit(0);
+   }
+
+   struct stat stat_buf;
+   int error = stat(pFilename, &stat_buf);
+
+   if (error) {
+      char buf[256] = { 0 };
+      strerror_s(buf, sizeof(buf), err);
+      ERROR_MESSAGE("Error getting file stats: %s\n", buf);
+      return NULL;
+   }
+
+   size = stat_buf.st_size;
+
+   char* p = (char*)malloc(size);
+   assert(p);
+
+   size_t bytes_read = fread(p, 1, size, f);
+
+   if (bytes_read != size) {
+      char buf[256] = { 0 };
+      strerror_s(buf, sizeof(buf), err);
+      ERROR_MESSAGE("Read file error file: %s\n", buf);
+      exit(0);
+   }
+
+   fclose(f);
+
+   return p;
 }

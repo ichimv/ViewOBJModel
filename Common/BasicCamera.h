@@ -21,7 +21,7 @@ class BasicCamera
 private:
 	// Default camera values
 	const float zNEAR = 0.1f;
-	const float zFAR = 500.f;
+	const float zFAR = 50000.f;
 	const float YAW = -90.0f;
 	const float PITCH = 0.0f;
 	const float FOV = 45.0f;
@@ -68,6 +68,15 @@ public:
 
 		// define the viewport transformation
 		glViewport(0, 0, windowWidth, windowHeight);
+	}
+
+	const glm::mat4 GetViewProjMatrix() const
+	{
+		glm::mat4 View = GetViewMatrix();
+		glm::mat4 Projection = GetProjectionMatrix();
+		glm::mat4 ViewProj = Projection * View;
+		
+		return ViewProj;
 	}
 
 	const glm::mat4 GetViewMatrix() const
@@ -120,6 +129,8 @@ public:
 			position -= up * velocity;
 			break;
 		}
+
+		printf("Camera position: x = %f, y = %f, z = %f; \n", position.x, position.y, position.x);
 	}
 
 	void MouseControl(float xPos, float yPos)

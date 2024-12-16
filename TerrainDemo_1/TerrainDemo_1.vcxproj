@@ -138,6 +138,8 @@
     <ClCompile Include="..\Common\Shader.cpp" />
     <ClCompile Include="..\Common\Utils.cpp" />
     <ClCompile Include="TerrainDemo_1.cpp" />
+    <ClCompile Include="TerrainGrid.cpp" />
+    <ClCompile Include="TerrainMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Common\BasicCamera.h" />
@@ -151,9 +153,18 @@
     <ClInclude Include="..\Common\Types.h" />
     <ClInclude Include="..\Common\Utils.h" />
     <ClInclude Include="..\Common\Vertex.h" />
+    <ClInclude Include="HeightMap.h" />
     <ClInclude Include="TerrainDemo_1.h" />
+    <ClInclude Include="TerrainGrid.h" />
+    <ClInclude Include="TerrainMesh.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Shaders\terrain.fs">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\Shaders\terrain.vs">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

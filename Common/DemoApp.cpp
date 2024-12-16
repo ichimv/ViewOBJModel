@@ -2,6 +2,7 @@
 
 #include "DemoApp.h"
 #include "BasicCamera.h"
+#include "Shader.h"
 
 #pragma comment (lib, "glfw3dll.lib")
 #pragma comment (lib, "glew32.lib")
@@ -10,6 +11,7 @@
 static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 static void CursorPosCallback(GLFWwindow* window, double x, double y);
 static void MouseButtonCallback(GLFWwindow* window, int Button, int Action, int Mode);
+
 
 DemoApp* g_App;
 
@@ -37,9 +39,17 @@ static void MouseButtonCallback(GLFWwindow* window, int Button, int Action, int 
       g_App->MouseCB(Button, Action, (int)x, (int)y);
 }
 
-DemoApp::DemoApp(int windowWidth, int windowHeight, const char* windowTitle)
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+   // make sure the viewport matches the new window dimensions; note that width and 
+   // height will be significantly larger than specified on retina displays.
+   g_App->Reshape(width, height);
+}
+
+DemoApp::DemoApp(int windowWidth, int windowHeight, const char* windowTitle, const char* shaderFilePath)
 {
    Init(windowWidth, windowHeight, windowTitle);
+   InitShader(shaderFilePath);
 }
 DemoApp::~DemoApp()
 {
@@ -48,10 +58,8 @@ DemoApp::~DemoApp()
 
 void DemoApp::Cleanup()
 {
-   if (m_pBasicCamera != NULL) {
-      delete m_pBasicCamera;
-      m_pBasicCamera = NULL;
-   }
+   SAFE_DELETE(m_pBasicCamera);
+   SAFE_DELETE(m_pShader);
 }
 
 void DemoApp::Run()
@@ -73,6 +81,11 @@ void DemoApp::RenderScene()
 {
    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+   const glm::mat4 viewProj = m_pBasicCamera->GetViewProjMatrix();
+
+   m_pShader->use();
+   m_pShader->setMat4("ViewProj", viewProj);
 }
 
 void DemoApp::PassiveMouseCB(double x, double y)
@@ -132,6 +145,11 @@ void DemoApp::MouseCB(int button, int action, int x, int y)
 {
 }
 
+void DemoApp::Reshape(int width, int height)
+{
+   m_pBasicCamera->Reshape(width, height);
+}
+
 void DemoApp::Init(int windowWidth, int windowHeight, const char* windowTitle)
 {
    CreateGlfwWindow(windowWidth, windowHeight, windowTitle);
@@ -142,12 +160,23 @@ void DemoApp::Init(int windowWidth, int windowHeight, const char* windowTitle)
 
    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-   glFrontFace(GL_CW);
+   glFrontFace(GL_CCW);
    glCullFace(GL_BACK);
 
    glEnable(GL_CULL_FACE);
    glEnable(GL_DEPTH_TEST);
 }
+
+void DemoApp::InitShader(const char* shaderFilePath)
+{
+   std::string stringShaderFilePath = std::string(shaderFilePath);
+
+   std::string vertexPath = stringShaderFilePath + ".vs";
+   std::string fragmentPath = stringShaderFilePath + ".fs";
+
+   m_pShader = new Shader(vertexPath.c_str(), fragmentPath.c_str());
+}
+
 
 void DemoApp::CreateGlfwWindow(int windowWidth, int windowHeight, const char* windowTitle)
 {
@@ -165,9 +194,10 @@ void DemoApp::InitCallbacks()
    glfwSetKeyCallback(m_pWindow, KeyCallback);
    glfwSetCursorPosCallback(m_pWindow, CursorPosCallback);
    glfwSetMouseButtonCallback(m_pWindow, MouseButtonCallback);
+   glfwSetFramebufferSizeCallback(m_pWindow, framebuffer_size_callback);
 }
 
 void DemoApp::InitCamera(int windowWidth, int windowHeight)
 {
-   m_pBasicCamera = new BasicCamera(windowWidth, windowHeight, glm::vec3(0.0, 0.0, 3.0));
+   m_pBasicCamera = new BasicCamera(windowWidth, windowHeight, glm::vec3(512.0, 500.0, 512.0));
 }

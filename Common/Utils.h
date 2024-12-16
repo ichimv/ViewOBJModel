@@ -2,7 +2,6 @@
 #include <detail/type_int.hpp>
 #include "Types.h"
 
-
 #ifdef _WIN64
 #define SNPRINTF _snprintf_s
 #define VSNPRINTF vsnprintf_s
@@ -22,10 +21,11 @@
 
 #define SAFE_DELETE(p) if (p) { delete p; p = NULL; }
 
-void ErrorMessage(const char* pFileName, uint line, const char* msg, ...);
+void Message(const char* pFileName, uint line, const char* msg, ...);
 
-#define ERROR_MESSAGE0(msg) ErrorMessage(__FILE__, __LINE__, msg)
-#define ERROR_MESSAGE(msg, ...) ErrorMessage(__FILE__, __LINE__, msg, __VA_ARGS__)
+#define ERROR_MESSAGE0(msg) Message(__FILE__, __LINE__, msg)
+#define ERROR_MESSAGE(msg, ...) Message(__FILE__, __LINE__, msg, __VA_ARGS__)
+#define MESSAGE(msg, ...) Message(__FILE__, __LINE__, msg, __VA_ARGS__)
 
 void glDebugOutput(GLenum source,
    GLenum type,
@@ -34,3 +34,5 @@ void glDebugOutput(GLenum source,
    GLsizei length,
    const char* message,
    const void* userParam);
+
+char* ReadBinaryFile(const char* pFilename, int& size);
